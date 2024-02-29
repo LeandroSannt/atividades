@@ -1,18 +1,9 @@
-import { useState, useEffect } from 'react'
-import { Texto } from '../../components/Texto'
+import { useState } from 'react'
 
 import { Container } from './styles'
 
-import api from '../../services/api'
 import { Link } from 'react-router-dom'
-
-interface ValorProps {
-  valor: number
-  nome?: string
-  sobrenome?: string
-  peso: number
-  altura?: number
-}
+import { useValorAtual } from '../../hooks/useValorAtual'
 
 export interface DadosProps {
   userId: number
@@ -22,67 +13,23 @@ export interface DadosProps {
 }
 
 const Home = () => {
-  const [valorAtual, setValorAtual] = useState<ValorProps>({
-    valor: 10,
-    nome: 'leandro',
-    peso: 80
-  })
+  const { global, valorAtual, multipliquePor2, cliquei, dados } =
+    useValorAtual()
 
-  const [dados, setDados] = useState<DadosProps[]>([])
   const [valorAlterado] = useState<number>(20)
   const [passei, setPassei] = useState(false)
-
-  const multipliquePor2 = () => {
-    setValorAtual({
-      peso: valorAtual.peso * 3,
-      valor: valorAtual.valor * 2
-    })
-  }
-
-  // useEffect(() => {
-  //   if (passei === true) {
-  //     setValorAlterado(valorAlterado * 2)
-
-  //     alert('ola mundo')
-  //   }
-  // }, [passei])
 
   const input = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event)
   }
 
-  useEffect(() => {
-    // fetch('https://jsonplaceholder.typicode.com/todos')
-    //   .then(response => response.json())
-    //   .then(json => console.log(json))
-
-    const fetchData = async () => {
-      const response = await api.get('todos')
-
-      if (response.data) {
-        setDados(response.data)
-      }
-    }
-
-    fetchData()
-  }, [])
-
   return (
     <Container>
-      <Texto
-        pessoa={{
-          valorAtual: valorAtual.valor,
-          altura: 1.73,
-          nome: valorAtual.nome,
-          peso: valorAtual.peso,
-          sobrenome: 'santos'
-        }}
-        text={'texto 1'}
-        color="green"
-        width="500px"
-      />
+      {global}
+      {valorAtual.valor}
+      <br />
       <input type="text" onChange={input} />
-      <button onClick={multipliquePor2}>Cliquei</button> <br />
+      <button onClick={multipliquePor2}>multiplique</button> <br />
       <button
         onClick={() => {
           setPassei(!passei)
@@ -90,6 +37,7 @@ const Home = () => {
       >
         Cliquei no passei
       </button>{' '}
+      <button onClick={cliquei}>Cliquei</button>
       <br />
       valor alterado - {valorAlterado}
       <br />
